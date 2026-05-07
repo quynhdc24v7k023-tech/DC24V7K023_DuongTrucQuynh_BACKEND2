@@ -13,6 +13,8 @@ class ContactService {
             address: payload.address,
             phone: payload.phone,
             favorite: payload.favorite,
+            // Đã thêm trường interests
+            interests: payload.interests,
         };
 
         // Loại bỏ các trường có giá trị undefined
@@ -25,8 +27,9 @@ class ContactService {
     async create(payload) {
         const contact = this.extractConactData(payload);
         const result = await this.Contact.findOneAndUpdate(
-            contact, 
-            { $set: { favorite: contact.favorite === true } },
+            contact,
+            // Cập nhật toàn bộ dữ liệu từ contact vào database
+            { $set: contact },
             { returnDocument: "after", upsert: true }
         );
         return result;
@@ -62,7 +65,6 @@ class ContactService {
         return result;
     }
 
-   
     async delete(id) {
         const result = await this.Contact.findOneAndDelete({
             _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
@@ -78,7 +80,6 @@ class ContactService {
         const result = await this.Contact.deleteMany({});
         return result.deletedCount;
     }
-  
 }
-    module.exports = ContactService;
 
+module.exports = ContactService;
